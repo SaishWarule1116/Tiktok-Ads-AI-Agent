@@ -17,46 +17,49 @@ An intelligent, CLI-based agent designed to streamline the creation of TikTok Ad
 - **Pydantic/Schema Validation**: For robust internal data integrity.
 - **Dotenv**: For secure environment variable management.
 
-## 🚀 Getting Started
+## 🧩 Technical Deep Dive
 
-### Prerequisites
+### 🔐 How OAuth is Handled
+The agent implements a **Mock OAuth2 flow** managed in `oauth.py`. 
+- **Validation**: It checks for mandatory environment variables (`TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET`).
+- **Token Generation**: Successfully authenticated users (using `test_client_id`) receive a structured mock token containing their name and scope information.
+- **State Management**: Tokens are stored in an in-memory `_TOKEN_STORE` with support for:
+  - **Expiry**: Tokens expire after 5 minutes to test refresh/re-auth logic.
+  - **Scopes**: Specifically checks for the `ads` scope required for campaign creation.
+  - **Revocation**: Supports manual token revocation to simulate logout or permission removal.
 
-- Python installed on your machine.
-- A **Google Gemini API Key** (get one at [Google AI Studio](https://aistudio.google.com/)).
+### 🧠 Prompt Design
+The intelligence layer in `llm.py` uses a **Decoupled Prompt Strategy**:
+- **System Instructions**: Define a high-level expert persona (e.g., "You are an OAuth expert"). This is passed via the `system_instruction` parameter in the Gemini SDK to maintain consistent behavior.
+- **Dynamic Context**: The user prompt is injected with raw JSON errors or system state.
+- **Instructional Anchors**: Every prompt includes a specific command (e.g., "Explain this error clearly and suggest a fix") to ensure the output remains actionable and concise, avoiding generic LLM conversational "fluff".
 
-### Installation
+### 🔌 API Assumptions & Mocks
+The `tiktok_api.py` module simulates the TikTok Marketing API behaviors:
+- **Status Codes**: Mimics HTTP status returns like `403 Geo-restriction` and `400 Invalid Argument`.
+- **Validation Logic**: Implements business rules that aren't possible to check via simple schema alone, such as the `music_id` requirement for `Conversions` objectives.
+- **Scenario Simulation**: Certain triggers are hardcoded for testing, such as campaign names starting with "India" triggering a regional block.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/SaishWarule1116/Tiktok-Ads-AI-Agent.git
-   cd tiktok-ads-ai-agent
-   ```
+## 🚀 How to Run the Agent
 
-2. **Set up a virtual environment**:
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Configuration
-
-Create a `.env` file in the root directory and add your credentials:
-
-```text
-GOOGLE_API_KEY=your_gemini_api_key_here
-TIKTOK_CLIENT_ID=test_client_id
-TIKTOK_CLIENT_SECRET=test_client_secret
-GEMINI_MODEL=models/gemini-flash-latest
+### Step 1: Clone & Install
+```bash
+git clone https://github.com/your-username/tiktok-ads-ai-agent.git
+cd tiktok-ads-ai-agent
+python -m venv .venv
+# Activate: .venv\Scripts\activate (Win) or source .venv/bin/activate (Mac/Linux)
+pip install -r requirements.txt
 ```
 
-### Usage
+### Step 2: Configure Environment
+Create a `.env` file:
+```text
+GOOGLE_API_KEY=your_key
+TIKTOK_CLIENT_ID=test_client_id
+TIKTOK_CLIENT_SECRET=test_client_secret
+```
 
-Run the agent:
+### Step 3: Launch
 ```bash
 python agent.py
 ```
@@ -99,3 +102,4 @@ Try these inputs to see the AI agent in action:
 - **Validation**: Enter a 1-character campaign name to trigger local validation.
 - **Geo-Block**: Name your campaign "India Promo" to see the AI explain a simulated regional restriction.
 - **Music Requirement**: Choose "Conversions" and try to skip music to see the business rule enforcement.
+
