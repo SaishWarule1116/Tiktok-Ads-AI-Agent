@@ -28,7 +28,7 @@ An intelligent, CLI-based agent designed to streamline the creation of TikTok Ad
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/tiktok-ads-ai-agent.git
+   git clone https://github.com/SaishWarule1116/Tiktok-Ads-AI-Agent.git
    cd tiktok-ads-ai-agent
    ```
 
