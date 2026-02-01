@@ -42,16 +42,7 @@ The `tiktok_api.py` module simulates the TikTok Marketing API behaviors:
 
 ## 🚀 How to Run the Agent
 
-### Step 1: Clone & Install
-```bash
-git clone https://github.com/your-username/tiktok-ads-ai-agent.git
-cd tiktok-ads-ai-agent
-python -m venv .venv
-# Activate: .venv\Scripts\activate (Win) or source .venv/bin/activate (Mac/Linux)
-pip install -r requirements.txt
-```
-
-### Step 2: Configure Environment
+### Step 1: Configure Environment
 Create a `.env` file:
 ```text
 GOOGLE_API_KEY=your_key
@@ -59,7 +50,7 @@ TIKTOK_CLIENT_ID=test_client_id
 TIKTOK_CLIENT_SECRET=test_client_secret
 ```
 
-### Step 3: Launch
+### Step 2: Launch
 ```bash
 python agent.py
 ```
